@@ -18,7 +18,7 @@ const createThought = async (req, res) => {
             { _id: req.body.userId },
             { $addToSet: { thoughts: thoughtData._id } },
             { new: true }
-        )
+        );
         res.json(thoughtData);
     } catch (error) {
         res.status(500).json(error);
