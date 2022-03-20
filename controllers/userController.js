@@ -37,12 +37,34 @@ const createUser = async (req, res) => {
 
 // PUT to update a user by its _id
 const updateUser = async (req, res) => {
-
+    try {
+        const userData = await User.findOneAndUpdate(
+            { _id: req.params.userId },
+            req.body,
+            { new: true }
+        );
+        !userData 
+            ? res.status(404).json({ message: 'No user found with that ID' }) 
+            : res.json(userData);
+    } catch (error) {
+        res.status(500).json(error);
+    }
 }
 
 // DELETE a user by its _id
 const deleteUser = async (req, res) => {
-
+    try {
+        const userData = await User.findOneAndRemove({ _id: req.params.userId });
+        if (!userData) {
+            res.status(404).json({ message: 'No user found with that ID' }); 
+        } else {
+            // delete user's thoughts as well
+            const thoughtData = await Thought.deleteMany({ username: userData.username });
+            res.json(userData);
+        }
+    } catch (error) {
+        res.status(500).json(error);
+    }
 }
 
 // POST to add a new friend to a user's friend list
